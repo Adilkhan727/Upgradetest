@@ -1,9 +1,32 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 function LeadForm() {
+  useEffect(() => {
+    // Добавляем скрипт виджета динамически при монтировании компонента
+    const script = document.createElement('script');
+    script.src = 'https://crm.tennet.kz/static/js/lead-form-widget.js?v=1777694783';
+    script.async = true;
+    document.body.appendChild(script);
+
+    script.onload = () => {
+      if (window.CRMLeadForm) {
+        window.CRMLeadForm.init({
+          containerId: 'crm-lead-form-234f09f7-c1b3-4154-8632-ba3fa6134f0d',
+          formId: '234f09f7-c1b3-4154-8632-ba3fa6134f0d',
+          apiUrl: 'https://crm.tennet.kz/api/public/forms/234f09f7-c1b3-4154-8632-ba3fa6134f0d/'
+        });
+      }
+    };
+
+    return () => {
+      // Удаляем скрипт при размонтировании, чтобы не было дублей
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <motion.section
-      id="lead-form"
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
@@ -17,17 +40,8 @@ function LeadForm() {
         </h2>
       </div>
 
-      {/* Используем iframe для обхода CORS */}
-      <div style={{ width: '100%', minHeight: '500px', display: 'flex', justifyContent: 'center' }}>
-        <iframe 
-          src="https://crm.tennet.kz/api/public/forms/65e86ef8-8fac-4075-8dc8-cf18b1fd5f2c/" 
-          width="100%" 
-          height="500px" 
-          frameBorder="0"
-          title="CRM Lead Form"
-          style={{ border: 'none', maxWidth: '800px' }}
-        ></iframe>
-      </div>
+      {/* Контейнер для виджета */}
+      <div id="crm-lead-form-234f09f7-c1b3-4154-8632-ba3fa6134f0d" className="mx-auto max-w-2xl"></div>
     </motion.section>
   );
 }
